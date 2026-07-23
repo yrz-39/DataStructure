@@ -33,6 +33,26 @@ template <typename T> class ArrayList : public LinearList<T> {
   public:
     ArrayList() : data_(nullptr), size_(0), capacity_(0) {
     }
+    ArrayList(const ArrayList<T>& other) {
+        size_ = other.size_;
+        capacity_ = other.capacity_;
+        if (capacity_ == 0) {
+            data_ = nullptr;
+            return;
+        }
+        data_ = new T[capacity_];
+        for (std::size_t i = 0; i < size_; ++i) {
+            data_[i] = other.data_[i];
+        }
+    }
+    ArrayList(ArrayList<T>&& other) noexcept {
+        data_ = other.data_;
+        size_ = other.size_;
+        capacity_ = other.capacity_;
+        other.data_ = nullptr;
+        other.size_ = 0;
+        other.capacity_ = 0;
+    }
     virtual ~ArrayList() {
         delete[] data_;
     }
@@ -82,23 +102,67 @@ template <typename T> class ArrayList : public LinearList<T> {
         }
     }
     T erase(std::size_t index) override {
-        //删除的范围也是0-size_-1
-        if(index>=size_){
+        // 删除的范围也是0-size_-1
+        if (index >= size_) {
             throw std::out_of_range("索引超出范围");
         }
         T erased_data = data_[index];
-        for(std::size_t i = index + 1;i<size_;++i){
-            data_[i-1]=data_[i];
+        for (std::size_t i = index + 1; i < size_; ++i) {
+            data_[i - 1] = data_[i];
         }
         size_--;
         return erased_data;
     }
     std::size_t find(const T& value) const override {
-        for(std::size_t i=0;i<size_;++i){
-            if(data_[i]==value){
+        for (std::size_t i = 0; i < size_; ++i) {
+            if (data_[i] == value) {
                 return i;
             }
         }
         return size_;
+    }
+    void push_back(const T& value) {
+        insert(size(), value);
+    }
+    ArrayList<T>& operator=(const ArrayList<T>& other) {
+        if (&other == this) {
+            return *this;
+        }
+        // 先准备新资源，再释放旧的
+        size_ = other.size_;
+        capacity_ = other.capacity_;
+        T* new_data;
+        if (capacity_ == 0) {
+            new_data = nullptr;
+        } else {
+            new_data = new T[capacity_];
+            for (std::size_t i = 0; i < size_; ++i) {
+                new_data[i] = other.data_[i];
+            }
+        }
+
+        delete[] data_;
+        data_ = new_data;
+        return *this;
+    }
+    ArrayList<T>& operator=(ArrayList<T>&& other) noexcept {
+        if (&other == this) {
+            return *this;
+        }
+
+        delete[] data_;
+
+        size_ = other.size_;
+        capacity_ = other.capacity_;
+        data_ = other.data_;
+
+        other.data_ = nullptr;
+        other.size_ = 0;
+        other.capacity_ = 0;
+
+        return *this;
+    }
+    void clear() {
+        size_ = 0;
     }
 };
