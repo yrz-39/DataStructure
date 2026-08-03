@@ -16,7 +16,8 @@
 - 7.19 当前还在工程初始化阶段，仅完成 CMake 的简单配置。
 - 7.21 完成最基本断言调试，成功运行 CTest，写出模板 `LinearList<T>`。
 - 7.22—7.23 完成动态数组顺序表 `ArrayList<T>`：基本线性表接口、几何扩容、`push_back`、`clear` 与 Rule of Five。
-- 下一步：在新的对话中进入单链表 `SinglyLinkedList<T>`。
+- 7.24—8.3 完成单链表 `SinglyLinkedList<T>`：`head_`/`tail_`/`size_` 链式表示、`LinearList<T>` 全部抽象接口、`push_back`、`clear`、`copy_from` 复用与完整 Rule of Five。
+- 下一步：进入双向链表 `DoublyLinkedList<T>`。
 
 ## 3.工具链
 - 该实验以 C++20 / CMake / CTest 为基础。
@@ -25,6 +26,28 @@
 - 实验先写失败测试，再完成最小实现。
 
 ## 5. GitHub 提交记录
+
+### 2026-08-03 — `feat(lab1): implement SinglyLinkedList<T> linked list`
+
+对比范围：`92194af` → 本次提交。
+
+#### 本次实现内容
+
+- 完成 `ds/singly_linked_list.hpp` 中的 `SinglyLinkedList<T>`：私有嵌套 `Node`、`head_`/`tail_`/`size_` 表示、`LinearList<T>` 全部抽象接口（`size`/`empty`/`at`/`set`/`insert`/`erase`/`find`）。
+- 实现 `push_back`、`clear`，并抽出私有 `copy_from()` 供拷贝构造与复制赋值共用。
+- 实现完整 Rule of Five（析构、复制构造、复制赋值、移动构造、移动赋值），含自赋值保护与 `noexcept`。
+- 在 `CMakeLists.txt` 注册 `test_singly_linked_list` 测试目标；测试覆盖空表、头尾与中间插删、单节点删除后复用、`erase` 返回值、深拷贝互不影响、自赋值/链式赋值、移动后源对象复用、`clear` 后复用、100 节点规模。
+
+#### 验证
+
+- `cmake --build build` 零警告零错误；`ctest --test-dir build --output-on-failure` 3/3 通过（`ds_tests`、`test_array_list`、`test_singly_linked_list`）。
+
+#### 后续验收项
+
+- 与 `std::list`/`std::vector` 的随机差分测试暂缓至线性表收束阶段。
+- `reverse()` 与 `push_front()` 尚未实现，待双向链表完成后一并补齐。
+- `erase()` 中 `T value;` 要求 `T` 可默认构造（已用非默认构造类型探针复现）；后续改为 `T value = head_->value;` 或分支内直接初始化，以支持任意可拷贝类型。
+- `copy_from` 在 `new` 抛异常时的强异常安全保证，与顺序表复制赋值同批处理。
 
 ### 2026-07-23 — `feat(lab1): complete ArrayList<T>`
 

@@ -5,4 +5,5 @@ BreakBeforeBraces: Attach
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
+PointerAlignment: Left
 
