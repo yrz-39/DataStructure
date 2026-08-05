@@ -21,3 +21,8 @@ add_test(NAME test_array_list COMMAND test_array_list)
 add_executable(test_singly_linked_list tests/test_singly_linked_list.cpp)
 target_include_directories(test_singly_linked_list PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 add_test(NAME test_singly_linked_list COMMAND test_singly_linked_list)
+
+add_executable(test_doubly_linked_list tests/test_doubly_linked_list.cpp)
+target_include_directories(test_doubly_linked_list PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+add_test(NAME test_doubly_linked_list COMMAND test_doubly_linked_list)
+

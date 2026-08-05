@@ -17,7 +17,8 @@
 - 7.21 完成最基本断言调试，成功运行 CTest，写出模板 `LinearList<T>`。
 - 7.22—7.23 完成动态数组顺序表 `ArrayList<T>`：基本线性表接口、几何扩容、`push_back`、`clear` 与 Rule of Five。
 - 7.24—8.3 完成单链表 `SinglyLinkedList<T>`：`head_`/`tail_`/`size_` 链式表示、`LinearList<T>` 全部抽象接口、`push_back`、`clear`、`copy_from` 复用与完整 Rule of Five。
-- 下一步：进入双向链表 `DoublyLinkedList<T>`。
+- 8.5 完成双向链表 `DoublyLinkedList<T>`：以 `prev`/`next` 双向链接维护首尾节点，支持从较近端访问元素。
+- 下一步：补齐 `push_front()` 与 `reverse()`，并在线性表收束阶段完成随机差分测试与异常安全改进。
 
 ## 3.工具链
 - 该实验以 C++20 / CMake / CTest 为基础。
@@ -26,6 +27,27 @@
 - 实验先写失败测试，再完成最小实现。
 
 ## 5. GitHub 提交记录
+
+### 2026-08-05 — `feat(lab1): implement DoublyLinkedList<T> linked list`
+
+对比范围：`3bc5155` → 本次提交。
+
+#### 本次实现内容
+
+- 完成 `ds/doubly_linked_list.hpp` 中的 `DoublyLinkedList<T>`：私有嵌套 `Node` 同时维护 `prev` 与 `next`，并以 `head_`/`tail_`/`size_` 保存链表状态。
+- 实现 `LinearList<T>` 全部抽象接口、`push_back()`、`clear()` 与 `copy_from()`；`at()` 会根据索引位置从头或尾择近遍历。
+- 实现 Rule of Five（析构、复制构造、复制赋值、移动构造、移动赋值），含自赋值与自移动保护、移动后源对象复用。
+- 在 `CMakeLists.txt` 注册 `test_doubly_linked_list`；同步删除单链表 `copy_from()` 中遗留的无效注释。
+
+#### 验证
+
+- 使用 Debug 配置执行 `cmake --build build` 与 `ctest --test-dir build --output-on-failure`，4/4 通过（`ds_tests`、`test_array_list`、`test_singly_linked_list`、`test_doubly_linked_list`）。
+- 双向链表测试覆盖空表、头/中/尾插删、单节点删除与复用、尾删后复用、反向访问路径、越界异常、const 访问、查找、深拷贝、复制赋值、移动语义、清空后复用及 100 节点规模。
+
+#### 后续验收项
+
+- 与顺序表、单链表共同保留的 `erase()` 默认构造限制、`copy_from()` 强异常安全，以及随机差分测试，在线性表实现收束时统一处理。
+- `push_front()` 与 `reverse()` 尚未实现，待三个线性表实现完成后统一补齐并比较实现差异。
 
 ### 2026-08-03 — `feat(lab1): implement SinglyLinkedList<T> linked list`
 
